@@ -1,0 +1,10 @@
+name: Test Action Input - User
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-reusable-workflow:
+    uses: ./.github/workflows/matrix-reusable-workflow.yml
+    with:
+      user: Alice

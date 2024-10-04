@@ -1,0 +1,47 @@
+name: Resusable Workflow Matrix
+
+on:
+  workflow_call:
+    inputs:
+      user:
+        required: false
+        type: string
+        description: 'The user to greet'
+        default: ${{ github.repository }}
+
+jobs:
+  job-1:
+    runs-on: ubuntu-latest
+    container:
+      image: veracode/api-signing:latest
+      options: --user root
+    outputs:
+      user-splited: ${{ steps.setVar.outputs.user-splited }}
+    steps:
+      - name: Split name
+        id: setVar
+        run: |
+          echo "user-splited=$(echo '${{ inputs.user }}' | cut -d '/' -f2 )" >> "$GITHUB_OUTPUT"
+          
+      - name: Create file
+        run: |
+          echo "Hello ${{ steps.setVar.outputs.user-splited }}" >> greetings.txt
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.setVar.outputs.user-splited }} artifact
+          path: greetings.txt
+
+  job-2:
+    needs: job-1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.job-1.outputs.user-splited }} artifact
+          path: .
+
+      - name: Print artifact
+        run: cat greetings.txt

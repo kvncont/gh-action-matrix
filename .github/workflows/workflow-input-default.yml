@@ -1,0 +1,8 @@
+name: Test Action Input - Default
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-reusable-workflow:
+    uses: ./.github/workflows/matrix-reusable-workflow.yml

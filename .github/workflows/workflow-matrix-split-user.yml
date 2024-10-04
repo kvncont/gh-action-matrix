@@ -1,0 +1,13 @@
+name: Test Action Matrix - Split User
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-reusable-workflow:
+    strategy:
+      matrix:
+        users: [ 'kvncont/Alice', 'kvncont/Bob', 'kvncont/Charlie' ]
+    uses: ./.github/workflows/matrix-reusable-workflow.yml
+    with:
+      user: ${{ matrix.users }}
